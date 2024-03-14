@@ -1,0 +1,6 @@
+# Ignore Python compiled bytecode files
+*.pyc
+
+# Ignore environment files
+env/
+.idea/
