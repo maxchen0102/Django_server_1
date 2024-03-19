@@ -1,24 +1,18 @@
-# Use an official Python runtime as the base image
-FROM python:3.12.0
-
-# Set environment variables
-#ENV PYTHONUNBUFFERED 1
+# Use the official Python image from the Docker Hub
+FROM python:3.12
 
 # Set the working directory in the container
-WORKDIR /app
+# 可以隨意定義 就像是建立新資料夾(in docker )
+WORKDIR /code
+#複製當前層級所有的資料 到docker
+COPY . /code/
 
-# Copy the requirements.txt file from the current directory on your host machine
-# to the /app directory inside the Docker container
-COPY requirements.txt /app/
+RUN pip install -r requirements.txt
 
-# Install any needed dependencies specified in requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Copy the current directory contents into the container at /app
-COPY . /app/
-
-# Expose the port on which the Django app will run
+# Expose the port the Django app runs on
 EXPOSE 8000
 
-# Run Django development server
-CMD ["python", "manage.py", "runserver"]
+# Run the Django development server
+#CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+# 指定任何ip 都可以連接到docker 的8000 port
+CMD python manage.py runserver 0.0.0.0:8000
