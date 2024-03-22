@@ -27,7 +27,7 @@ def add_data(request):
         serializer.save()
     return Response(serializer.data, status=201)
 
-@api_view(['DELETE',"PUT"])
+@api_view(['DELETE',"PUT","GET"])
 def delete_data(request,id):
     try:
         product = Product.objects.get(id=id)
@@ -44,6 +44,10 @@ def delete_data(request,id):
             return Response(serializer.data, status=201)
         else :
             return Response(serializer.errors,)
+    elif request.method == 'GET':
+        serializer = ItemSerializer(instance=product)
+        return Response(serializer.data, status=201)
+
 
 # 取得資料by id
 def get_product(request,id):
