@@ -7,6 +7,9 @@ WORKDIR /code
 #複製當前層級所有的資料 到docker
 COPY . /code/
 
+# Install pip
+RUN apt-get update && apt-get install -y python3-pip
+
 RUN pip install -r requirements.txt
 
 # Expose the port the Django app runs on

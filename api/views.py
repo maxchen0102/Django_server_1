@@ -1,49 +1,51 @@
-from django.shortcuts import render
-import json 
+import json
+
+from django.forms.models import model_to_dict
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from pip._vendor.rich import status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+
 from product.models import Product
-from django.forms.models import model_to_dict
+from .serializers import ItemSerializer
+
+
 # Create your views here.
 
+@api_view(['GET'])
+def getdata(request):
+    items=Product.objects.all()
+    serializer = ItemSerializer(items, many=True)
+    return Response(serializer.data)
 
-# def api_home(request): 
-    
-#     try :
-#         params = request.GET.dict()
-#         print(params)
-#         print("connect success")
-        
-#     except:
-#         pass
-#     print(request.POST)
-#     print(request.GET)
+@api_view(['POST'])
+def add_data(request):
+    serializer = ItemSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+    return Response(serializer.data, status=201)
 
-    
-   
-#     return  JsonResponse({"status": "GET success"})
+@api_view(['DELETE',"PUT"])
+def delete_data(request,id):
+    try:
+        product = Product.objects.get(id=id)
+    except Product.DoesNotExist:
+        return Response(status=404)
 
-# @csrf_exempt
-# def api_post(request):
-#     if request.method == 'POST':
-#         # Handle POST request with JSON data
-#         try:
-#             json_data = json.loads(request.body)
-#             # Process JSON data here
-#             print(json_data)
-#             return JsonResponse({'status': 'POST success'})
-#         except json.JSONDecodeError:
-#             return JsonResponse({'error': 'Invalid JSON data'}, status=400)
-#     else:
-#         # Handle other HTTP methods (e.g., GET)
-#         return JsonResponse({'error': 'Unsupported method'}, status=405)
-    
-#取得資料by id
+    if request.method == 'DELETE':
+        product.delete()
+        return Response(status=201)
+    elif request.method == 'PUT' :
+        serializer = ItemSerializer(instance=product, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=201)
+        else :
+            return Response(serializer.errors,)
 
-
-def test(request):
-    data={"status":"ok"}
-    return JsonResponse(data)
+# 取得資料by id
 def get_product(request,id):
     print("this")
     if id :
@@ -51,6 +53,7 @@ def get_product(request,id):
         data = model_to_dict(product)
         print(data)
         return JsonResponse(data)
+
 
 #取得全部資料
 def get_all_product(request):
@@ -109,3 +112,6 @@ def product_update(request,id):
         except : 
             return JsonResponse({'error': 'Invalid id '})
     return JsonResponse({'error': 'Unsupported HTTP method'}, status=405)
+
+
+
