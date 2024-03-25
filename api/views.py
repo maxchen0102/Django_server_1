@@ -19,21 +19,20 @@ def getdata(request):
     items=Product.objects.all()
     serializer = ItemSerializer(items, many=True)
     return Response(serializer.data)
-
+@csrf_exempt
 @api_view(['POST'])
 def add_data(request):
     serializer = ItemSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
-    return Response(serializer.data, status=201)
-
+    return Response(serializer.data, )
+@csrf_exempt
 @api_view(['DELETE',"PUT","GET"])
 def delete_data(request,id):
     try:
         product = Product.objects.get(id=id)
     except Product.DoesNotExist:
         return Response(status=404)
-
     if request.method == 'DELETE':
         product.delete()
         return Response(status=201)
@@ -46,7 +45,7 @@ def delete_data(request,id):
             return Response(serializer.errors,)
     elif request.method == 'GET':
         serializer = ItemSerializer(instance=product)
-        return Response(serializer.data, status=201)
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
 
 # 取得資料by id
