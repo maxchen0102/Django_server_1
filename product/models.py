@@ -7,11 +7,11 @@ from django.db import models
 # Create your models here.
 
 
-class Product(models.Model): 
-    id = models.AutoField(primary_key=True) 
-    title=models.CharField(max_length=120) 
-    conttne=models.TextField(blank=True,null=True)
-    price=models.DecimalField(max_digits=15,decimal_places=2)
+# class Product(models.Model):
+#     id = models.AutoField(primary_key=True)
+#     title=models.CharField(max_length=120)
+#     conttne=models.TextField(blank=True,null=True)
+#     price=models.DecimalField(max_digits=15,decimal_places=2)
 
 
 class Category(models.Model):
@@ -28,7 +28,7 @@ class Category(models.Model):
         return f'/{self.slug}/'
 
 
-class Product2(models.Model):
+class Product(models.Model):
     category = models.ForeignKey(Category, related_name='products', on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     slug = models.SlugField()
