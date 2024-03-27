@@ -43,7 +43,7 @@ def checkout(request):
                     'price': item_data['price']
                 }
                 item_serializer = OrderItemSerializer(data=save_data)
-                if serializer.is_valid():
+                if item_serializer.is_valid():
                     try:
                         orderItem2 = OrderItem.objects.create(**save_data)
                         return Response({'message': 'Order'})
