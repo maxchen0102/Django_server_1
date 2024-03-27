@@ -36,16 +36,19 @@ def checkout(request):
                 # if item_serializer.is_valid():
                 #     item_serializer.save()
                 product_instance = Product.objects.get(id=str(item_data['product']))
-                save_data={
+                save_data = {
                     'order': order_instance,
                     'product': product_instance,
                     'quantity': item_data['quantity'],
                     'price': item_data['price']
                 }
-
-                orderItem = OrderItem.objects.create(**save_data)
-
-
+                item_serializer = OrderItemSerializer(data=save_data)
+                if serializer.is_valid():
+                    try:
+                        orderItem2 = OrderItem.objects.create(**save_data)
+                        return Response({'message': 'Order'})
+                    except Exception as e:
+                        return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                 # else:
                 #     # Return errors if OrderItem creation fails
                 #     return Response(item_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
